@@ -1,0 +1,7 @@
+[project]
+name = "steam-update-monitor"
+version = "0.1.0"
+description = "Steam game update check"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = []
