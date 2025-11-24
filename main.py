@@ -21,6 +21,7 @@ def main():
     try:
         # * Load config info
         games_config = load_json(os.path.join(CONFIG_DIR, "games.json"))
+        secrets = load_json(os.path.join(CONFIG_DIR, "secrets.json"))
 
     except FileNotFoundError as fnf_error:
         logger.critical(f"Critical Error: {fnf_error}")

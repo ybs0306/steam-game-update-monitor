@@ -14,3 +14,4 @@ logs/
 
 # config
 config/games.json
+config/secrets.json
