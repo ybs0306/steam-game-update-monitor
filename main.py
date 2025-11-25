@@ -1,5 +1,6 @@
 import json
 import os
+from pathlib import Path
 
 from modules.logger import setup_logging
 
@@ -23,6 +24,15 @@ def main():
         games_config = load_json(os.path.join(CONFIG_DIR, "games.json"))
         secrets = load_json(os.path.join(CONFIG_DIR, "secrets.json"))
         targets = load_json(os.path.join(CONFIG_DIR, "targets.json"))
+
+        steamcmd_path = games_config.get("steamcmd_path")
+        if not steamcmd_path:
+            logger.error("steamcmd_path not configured in games.json")
+            return
+
+        if not Path(steamcmd_path).is_file():
+            logger.error("steamcmd file is not exist")
+            return
 
     except FileNotFoundError as fnf_error:
         logger.critical(f"Critical Error: {fnf_error}")

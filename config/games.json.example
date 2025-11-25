@@ -2,5 +2,7 @@
     "games": [
         { "appid": "3363270", "name": "貓貓釣魚記" },
         { "appid": "1233070", "name": "海天島傳說" }
-    ]
+    ],
+
+    "steamcmd_path": "C:/Users/user_name/tools/steamcmd/steamcmd.exe"
 }
