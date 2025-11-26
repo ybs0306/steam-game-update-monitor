@@ -3,6 +3,7 @@ import os
 from pathlib import Path
 
 from modules.logger import setup_logging
+from modules.steam_cmd import SteamChecker
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 CONFIG_DIR = os.path.join(BASE_DIR, "config")
@@ -33,6 +34,21 @@ def main():
         if not Path(steamcmd_path).is_file():
             logger.error("steamcmd file is not exist")
             return
+
+        # * Init SteamChecker
+        checker = SteamChecker(steamcmd_path)
+
+        games = games_config.get("games", [])
+
+        # * Check every games
+        for game in games:
+            appid = game.get("appid")
+            name = game.get("name", "Unknown Game")
+
+            if not appid:
+                continue
+
+            checker.get_build_id(appid)
 
     except FileNotFoundError as fnf_error:
         logger.critical(f"Critical Error: {fnf_error}")
