@@ -64,19 +64,22 @@ class SteamChecker:
             logger.error(f"KeyError while traversing VDF object: {e}")
             return None
 
-    def get_build_id(self, appid):
-        """
-        call steamcmd get app_info & parser buildid
-        """
-        logger.info(f"Checking BuildID for AppID: {appid}...")
-
-        cmd = [
+    def _build_query_cmd(self, appid):
+        return [
             self.steamcmd_path,
             "+login", "anonymous",
             "+app_info_update", "1",  # force update info
             "+app_info_print", str(appid),
             "+quit"
         ]
+
+    def get_build_id(self, appid):
+        """
+        call steamcmd get app_info & parser buildid
+        """
+        logger.info(f"Checking BuildID for AppID: {appid}...")
+
+        cmd = self._build_query_cmd(appid)
 
         try:
             # Execute the instruction and capture the output
