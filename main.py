@@ -48,7 +48,11 @@ def main():
             if not appid:
                 continue
 
-            checker.get_build_id(appid)
+            current_build_id = checker.get_build_id(appid)
+
+            if not current_build_id:
+                logger.warning(f"Failed to retrieve BuildID for {name}")
+                continue
 
     except FileNotFoundError as fnf_error:
         logger.critical(f"Critical Error: {fnf_error}")
