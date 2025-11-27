@@ -1,3 +1,4 @@
+import itertools
 import json
 import os
 from pathlib import Path
@@ -39,20 +40,15 @@ def main():
         checker = SteamChecker(steamcmd_path)
 
         games = games_config.get("games", [])
+        app_map = {g["appid"]: g["name"] for g in games if "appid" in g}
 
-        # * Check every games
-        for game in games:
-            appid = game.get("appid")
-            name = game.get("name", "Unknown Game")
+        # * Checking games in batch mode
+        batch_size = games_config.get("query_batch_size")
+        for target_appids in itertools.batched(list(app_map.keys()), batch_size):
+            current_builds_map = checker.get_batch_build_ids(target_appids)
 
-            if not appid:
-                continue
-
-            current_build_id = checker.get_build_id(appid)
-
-            if not current_build_id:
-                logger.warning(f"Failed to retrieve BuildID for {name}")
-                continue
+            for appid, current_build_id in current_builds_map.items():
+                name = app_map.get(appid, "Unknown")
 
     except FileNotFoundError as fnf_error:
         logger.critical(f"Critical Error: {fnf_error}")
