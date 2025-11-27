@@ -1,5 +1,5 @@
 [project]
-name = "steam-update-monitor"
+name = "steam-game-update-monitor" 
 version = "0.1.0"
 description = "Steam game update check"
 readme = "README.md"
