@@ -40,6 +40,30 @@ class SteamChecker:
             logger.error(f"Failed to deserialize VDF data: {e}")
             return None
 
+    def _extract_buildid_from_dict(self, data_obj, appid):
+        """
+        Helper function to extract buildid from VDF object
+        """
+        try:
+            # try standard path
+            build_id = data_obj.get(str(appid), {}) \
+                               .get("depots", {}) \
+                               .get("branches", {}) \
+                               .get("public", {}) \
+                               .get("buildid")
+
+            if build_id:
+                logger.info(f"Found BuildID for {appid}: {build_id}")
+                return build_id
+            else:
+                logger.warning(
+                    f"BuildID not found in standard path for {appid}. Dump keys: {data_obj.keys()}")
+                return None
+
+        except KeyError as e:
+            logger.error(f"KeyError while traversing VDF object: {e}")
+            return None
+
     def get_build_id(self, appid):
         """
         call steamcmd get app_info & parser buildid
@@ -87,25 +111,7 @@ class SteamChecker:
             if not data_obj:
                 return None
 
-            try:
-                # try standard path
-                build_id = data_obj.get(str(appid), {}) \
-                                   .get("depots", {}) \
-                                   .get("branches", {}) \
-                                   .get("public", {}) \
-                                   .get("buildid")
-
-                if build_id:
-                    logger.info(f"Found BuildID for {appid}: {build_id}")
-                    return build_id
-                else:
-                    logger.warning(
-                        f"BuildID not found in standard path for {appid}. Dump keys: {data_obj.keys()}")
-                    return None
-
-            except KeyError as e:
-                logger.error(f"KeyError while traversing VDF object: {e}")
-                return None
+            return self._extract_buildid_from_dict(data_obj, appid)
 
         except Exception as e:
             logger.error(f"Exception checking {appid}: {e}")
