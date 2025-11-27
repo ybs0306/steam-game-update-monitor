@@ -1,7 +1,6 @@
 import itertools
 import json
 import os
-from pathlib import Path
 
 from modules.logger import setup_logging
 from modules.steam_cmd import SteamChecker
@@ -30,10 +29,6 @@ def main():
         steamcmd_path = games_config.get("steamcmd_path")
         if not steamcmd_path:
             logger.error("steamcmd_path not configured in games.json")
-            return
-
-        if not Path(steamcmd_path).is_file():
-            logger.error("steamcmd file is not exist")
             return
 
         # * Init SteamChecker

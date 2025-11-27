@@ -11,6 +11,9 @@ logger = logging.getLogger("SteamMonitor")
 class SteamChecker:
     def __init__(self, steamcmd_path):
         self.steamcmd_path = steamcmd_path
+        if not os.path.exists(self.steamcmd_path):
+            raise FileNotFoundError(
+                f"SteamCMD executable not found at: {self.steamcmd_path}")
 
     def _extract_vdf_block(self, full_text, start_index):
         """
