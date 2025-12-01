@@ -10,6 +10,12 @@ logger = logging.getLogger("SteamMonitor")
 
 class SteamChecker:
     def __init__(self, steamcmd_path):
+        """
+        Initialize a SteamChecker instance.
+
+        Args:
+            steamcmd_path (str): The file path to the SteamCMD executable.
+        """
         self.steamcmd_path = steamcmd_path
         if not os.path.exists(self.steamcmd_path):
             raise FileNotFoundError(
