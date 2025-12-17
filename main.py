@@ -3,6 +3,7 @@ import json
 import os
 
 from modules.logger import setup_logging
+from modules.notifier import Notifier
 from modules.steam_cmd import SteamChecker
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -43,6 +44,7 @@ def main():
 
         # * Init SteamChecker
         checker = SteamChecker(steamcmd_path)
+        notifier = Notifier(secrets, targets)
 
         games = games_config.get("games", [])
         app_map = {g["appid"]: g["name"] for g in games if "appid" in g}
@@ -70,6 +72,10 @@ def main():
                         f"Update detected for {name}! {last_build_id} -> {current_build_id}")
                     state[appid] = current_build_id
                     state_changed = True
+
+                    # Send notification
+                    notifier.notify(name, appid, last_build_id,
+                                    current_build_id)
                 else:
                     logger.info(
                         f"No update for {name}. (Current: {current_build_id})")
