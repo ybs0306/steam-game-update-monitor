@@ -7,6 +7,8 @@ from modules.steam_cmd import SteamChecker
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 CONFIG_DIR = os.path.join(BASE_DIR, "config")
+DATA_DIR = os.path.join(BASE_DIR, "data")
+STATE_FILE = os.path.join(DATA_DIR, "state.json")
 
 
 def load_json(filepath):
@@ -14,6 +16,13 @@ def load_json(filepath):
         return {}
     with open(filepath, 'r', encoding='utf-8') as f:
         return json.load(f)
+
+
+def save_json(filepath, data):
+    if not os.path.exists(os.path.dirname(filepath)):
+        os.makedirs(os.path.dirname(filepath))
+    with open(filepath, 'w', encoding='utf-8') as f:
+        json.dump(data, f, indent=4)
 
 
 def main():
@@ -25,6 +34,7 @@ def main():
         games_config = load_json(os.path.join(CONFIG_DIR, "games.json"))
         secrets = load_json(os.path.join(CONFIG_DIR, "secrets.json"))
         targets = load_json(os.path.join(CONFIG_DIR, "targets.json"))
+        state = load_json(STATE_FILE)
 
         steamcmd_path = games_config.get("steamcmd_path")
         if not steamcmd_path:
@@ -37,6 +47,7 @@ def main():
         games = games_config.get("games", [])
         app_map = {g["appid"]: g["name"] for g in games if "appid" in g}
 
+        state_changed = False
         # * Checking games in batch mode
         batch_size = games_config.get("query_batch_size")
         for target_appids in itertools.batched(list(app_map.keys()), batch_size):
@@ -44,6 +55,29 @@ def main():
 
             for appid, current_build_id in current_builds_map.items():
                 name = app_map.get(appid, "Unknown")
+
+                # * Check whether the game has been updated
+                last_build_id = state.get(appid)
+                if last_build_id is None:
+                    # First time executed, recorded without notification
+                    logger.info(
+                        f"First run for {name}. Saving BuildID: {current_build_id}")
+                    state[appid] = current_build_id
+                    state_changed = True
+                elif current_build_id != last_build_id:
+                    # Find different versions
+                    logger.info(
+                        f"Update detected for {name}! {last_build_id} -> {current_build_id}")
+                    state[appid] = current_build_id
+                    state_changed = True
+                else:
+                    logger.info(
+                        f"No update for {name}. (Current: {current_build_id})")
+
+        # * Save new state
+        if state_changed:
+            save_json(STATE_FILE, state)
+            logger.info("State updated.")
 
     except FileNotFoundError as fnf_error:
         logger.critical(f"Critical Error: {fnf_error}")

@@ -16,3 +16,6 @@ logs/
 config/games.json
 config/secrets.json
 config/targets.json
+
+# user data
+data/
