@@ -65,7 +65,7 @@ class SteamChecker:
             raw_output (str): The raw string output from SteamCMD.
 
         Returns:
-            dict: A mapping of { "appid": "buildid", ... }
+            dict: A mapping of { "appid": { "build_id": "123", "name": "GameName" }, ... }
         """
         results = {}
         pattern = re.compile(r'"(\d+)"\s*(\{)', re.MULTILINE)
@@ -94,11 +94,12 @@ class SteamChecker:
 
                 try:
                     data = vdf.loads(valid_vdf)
-                    build_id = self._extract_buildid_from_dict(data, appid)
+                    info = self._extract_game_info(data, appid)
 
-                    if build_id:
-                        results[appid] = build_id
-                        logger.info(f"Parsed {appid} -> BuildID: {build_id}")
+                    if info:
+                        results[appid] = info
+                        logger.info(
+                            f"Parsed {appid} ({info['name']}) -> BuildID: {info['build_id']}")
                     else:
                         logger.warning(
                             f"Parsed {appid} but buildid not found in standard path.")
@@ -118,28 +119,31 @@ class SteamChecker:
 
         return results
 
-    def _extract_buildid_from_dict(self, data_obj, appid):
+    def _extract_game_info(self, data_obj, appid):
         """
-        Helper function to extract buildid from VDF object
+        Helper function to extract and official game name from VDF object
         """
         try:
-            # try standard path
-            build_id = data_obj.get(str(appid), {}) \
-                               .get("depots", {}) \
-                               .get("branches", {}) \
-                               .get("public", {}) \
-                               .get("buildid")
+            # Get the root node of the AppID
+            root = data_obj.get(str(appid), {})
+
+            # Try standard path
+            build_id = root.get("depots", {}) \
+                .get("branches", {}) \
+                .get("public", {}) \
+                .get("buildid")
+
+            # Get official game name
+            steam_name = root.get("common", {}).get("name", "Unknown Game")
 
             if build_id:
-                logger.info(f"Found BuildID for {appid}: {build_id}")
-                return build_id
-            else:
-                logger.warning(
-                    f"BuildID not found in standard path for {appid}. Dump keys: {data_obj.keys()}")
-                return None
+                return {
+                    "build_id": build_id,
+                    "name": steam_name
+                }
+            return None
 
-        except KeyError as e:
-            logger.error(f"KeyError while traversing VDF object: {e}")
+        except Exception as e:
             return None
 
     def _build_query_cmd(self, appids):

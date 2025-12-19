@@ -55,9 +55,10 @@ def main():
         # * Checking games in batch mode
         batch_size = games_config.get("query_batch_size")
         for target_appids in itertools.batched(list(app_map.keys()), batch_size):
-            current_builds_map = checker.get_batch_build_ids(target_appids)
+            batch_results = checker.get_batch_build_ids(target_appids)
 
-            for appid, current_build_id in current_builds_map.items():
+            for appid, info in batch_results.items():
+                current_build_id = info.get("build_id")
                 name = app_map.get(appid, "Unknown")
 
                 # * Check whether the game has been updated
