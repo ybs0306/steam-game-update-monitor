@@ -1,6 +1,9 @@
 import requests
 import logging
 
+from telegram.helpers import escape_markdown
+
+
 logger = logging.getLogger("SteamMonitor")
 
 
@@ -25,7 +28,7 @@ class Notifier:
                 payload = {
                     "chat_id": chat_id,
                     "text": message,
-                    "parse_mode": "Markdown"
+                    "parse_mode": "MarkdownV2"
                 }
                 response = requests.post(url, json=payload, timeout=10)
                 response.raise_for_status()
@@ -35,12 +38,20 @@ class Notifier:
                     f"Failed to send Telegram message to {chat_id}: {e}")
 
     def notify(self, app_name, appid, old_build, new_build):
+        app_name = escape_markdown(app_name, version=2)
+        old_build = escape_markdown(old_build, version=2)
+        new_build = escape_markdown(new_build, version=2)
+
+        # Add escape characters according to MarkdownV2 restrictions
+        # Characters that need to be escaped include the following:
+        # _ * [ ] ( ) ~ ` > # + - = | { } . !
+        # https://core.telegram.org/bots/api#markdownv2-style
         msg = (
-            f"*{app_name}* Game Update Detected.\n"
+            f"*{app_name}* Game Update Detected\.\n"
             f"Old Build: `{old_build}`\n"
             f"New Build: `{new_build}`\n\n"
-            f"Update is available on Steam.\n"
-            f"https://store.steampowered.com/app/{appid}"
+            f"Update is available on Steam\.\n"
+            f"https://store\.steampowered\.com/app/{appid}"
         )
 
         self.send_telegram(msg)
