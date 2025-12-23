@@ -36,7 +36,7 @@ class Notifier:
 
     def notify(self, app_name, appid, old_build, new_build):
         msg = (
-            f"**{app_name}** Game Update Detected.\n"
+            f"*{app_name}* Game Update Detected.\n"
             f"Old Build: `{old_build}`\n"
             f"New Build: `{new_build}`\n\n"
             f"Update is available on Steam.\n"
