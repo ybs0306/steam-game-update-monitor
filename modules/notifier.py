@@ -47,10 +47,14 @@ class Notifier:
         # _ * [ ] ( ) ~ ` > # + - = | { } . !
         # https://core.telegram.org/bots/api#markdownv2-style
         msg = (
-            f"[*{app_name}*](https://store\.steampowered\.com/app/{appid}) Game Update Detected\.\n"
-            f"Old Build: `{old_build}`\n"
-            f"New Build: `{new_build}`\n\n"
-            f"Update is available on Steam\."
+            fr"[*{app_name}*](https://store\.steampowered\.com/app/{appid}) Game Update Detected\."
+            "\n"
+            fr"Old Build: `{old_build}`"
+            "\n"
+            fr"New Build: `{new_build}`"
+            "\n"
+            "\n"
+            fr"Update is available on Steam\."
         )
 
         self.send_telegram(msg)
