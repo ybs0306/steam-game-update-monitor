@@ -1,0 +1,8 @@
+{
+    "games": [
+        { "appid": "<APP_ID_1>", "name": "<GAME_NAME_1>" },
+        { "appid": "<APP_ID_2>", "name": "<GAME_NAME_2>" }
+    ],
+    "steamcmd_path": "<ABSOLUTE_PATH_TO_STEAMCMD>",
+    "query_batch_size": 10
+}

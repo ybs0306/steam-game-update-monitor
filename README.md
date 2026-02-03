@@ -53,7 +53,7 @@ cd steam-game-update-monitor
 
 ### 設定
 
-將 3 個範例檔案 `./config/games.json.example`, `./config/secrets.json.example`, `./config/targets.json.example`
+將 3 個範例檔案 `./config/games.example.json`, `./config/secrets.example.json`, `./config/targets.example.json`
 
 各複製一份到同路徑下，並且把檔名內的 ".example" 字樣刪除，並進行下列配置
 
@@ -62,10 +62,10 @@ cd steam-game-update-monitor
 ```json
 {
     "games": [
-        { "appid": "3363270", "name": "貓貓釣魚記" },
-        { "appid": "1233070", "name": "海天島傳說" }
+        { "appid": "<APP_ID_1>", "name": "<GAME_NAME_1>" },
+        { "appid": "<APP_ID_2>", "name": "<GAME_NAME_2>" }
     ],
-    "steamcmd_path": "C:/Users/user_name/tools/steamcmd/steamcmd.exe",
+    "steamcmd_path": "<ABSOLUTE_PATH_TO_STEAMCMD>",
     "query_batch_size": 10
 }
 ```
@@ -79,7 +79,7 @@ cd steam-game-update-monitor
 
 ```json
 {
-    "telegram_bot_token": "你的 Telegram Bot Token"
+    "telegram_bot_token": "<YOUR_TELEGRAM_BOT_TOKEN>"
 }
 ```
 
@@ -90,7 +90,10 @@ cd steam-game-update-monitor
 ```json
 {
     "telegram": {
-        "chat_ids": ["123456789", "987654321"]
+        "chat_ids": [
+            "<TELEGRAM_CHAT_ID_1>",
+            "<TELEGRAM_CHAT_ID_2>"
+        ]
     }
 }
 ```
