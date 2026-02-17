@@ -35,7 +35,11 @@ class Notifier:
                 logger.info(f"Telegram notification sent to {chat_id}")
             except Exception as e:
                 logger.error(
-                    f"Failed to send Telegram message to {chat_id}: {e}")
+                    f"Failed to send Telegram message to {chat_id}.\n"
+                    f"Error: {e}\n"
+                    f"Payload message content:\n{message}", 
+                    exc_info=True
+                )
 
     def notify(self, app_name, appid, old_build, new_build):
         app_name = escape_markdown(app_name, version=2)
