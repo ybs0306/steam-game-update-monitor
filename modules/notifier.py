@@ -26,8 +26,8 @@ class Notifier:
         for chat_id in chat_ids:
             try:
                 payload = {
-                    "chat_id": chat_id,
-                    "text": message,
+                    "chat_id": chat_id.strip(),
+                    "text": message.strip(),
                     "parse_mode": "MarkdownV2"
                 }
                 response = requests.post(url, json=payload, timeout=10)
